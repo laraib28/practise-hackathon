@@ -10,12 +10,12 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { UseSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { useSelector } from "react-redux";
-import { Provider } from "react-redux";
+// import { Provider } from "react-redux";
 
 
 
 function Nav() {
-  const item = useSelector((state: RootState) => state.cart);
+  // const item = useSelector((state: RootState) => state.cart);
   
   return (
     
