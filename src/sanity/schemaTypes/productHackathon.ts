@@ -1,3 +1,5 @@
+import { title } from "process";
+
 export default {
     name: 'product2',
     type: 'document',
@@ -81,6 +83,16 @@ export default {
         title: "Badge",
         type: "string",
       },
+      {
+        name:"inventory",
+        title:"Inventory",
+        type:"number"
+      },
+      {
+        name:"id",
+        title:"ID",
+        type:"number"
+      }
      
     ]
   };

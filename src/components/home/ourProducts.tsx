@@ -8,6 +8,7 @@ import { client } from '@/sanity/lib/client';
 import Link from 'next/link';
 
 export interface Product {
+    id: any;
     name: string;              
     description: string;        
     imageUrl: string;           

@@ -1,24 +1,24 @@
+
 import { client } from "@/sanity/lib/client";
+import { Product } from "@/app/types/product";
 import Image from "next/image";
+import { notFound } from "next/navigation"; // For handling not-found cases
 
-type Params = {
+// Dynamic route parameter type
+interface Params {
   slug: string;
-};
+}
 
+// Page component for the product
 const ProductPage = async ({ params }: { params: Params }) => {
   const { slug } = params;
 
-  // Ensure slug is being passed properly
-  if (!slug) {
-    return <div>Error: Slug is missing</div>;
-  }
-
-  // Fetch product data using the slug
-  const data = await client.fetch(
+  // Fetch product data from Sanity
+  const product: Product | null = await client.fetch(
     `*[_type == "product2" && slug.current == $slug][0] {
       name,
       description,
-      "imageUrl": image.asset->url,
+      "image": image.asset->url,
       price,
       discountPercentage,
       priceWithoutDiscount,
@@ -28,37 +28,47 @@ const ProductPage = async ({ params }: { params: Params }) => {
       badge,
       slug
     }`,
-    { slug }  // Pass the slug value to the query
+    { slug }
   );
 
-  if (!data) {
-    return (
-      <main className="max-w-5xl my-20 mx-auto p-4 text-center">
-        <h1 className="text-2xl font-bold">Product Not Found</h1>
-      </main>
-    );
+  // Redirect to a 404 page if no product is found
+  if (!product) {
+    notFound();
   }
 
   return (
-    <main className="max-w-5xl my-20 mx-auto p-6 flex flex-col gap-8 items-center">
-      <div className="flex flex-col md:flex-row items-center gap-8">
-        <div className="flex-shrink-0">
-          <img src={data.imageUrl} alt={data.name} height={500} width={500} className="rounded-lg object-cover" />
-        </div>
-        <div className="flex-grow">
-          <h2 className="text-3xl font-bold mb-6">{data.name}</h2>
-          <p className="text-gray-700 mb-4">{data.description}</p>
-          <p className="text-2xl font-semibold text-green-600 mb-2">${data.price}</p>
-          {data.discountPercentage && (
-            <p className="text-xl text-red-500 mb-2">
-              Discount: {data.discountPercentage}%
-            </p>
-          )}
-          <p className="text-lg text-gray-500">Rating: {data.rating} / 5 ({data.ratingCount} reviews)</p>
-        </div>
-      </div>
-    </main>
+    <div className="max-w-5xl mx-auto my-20">
+      <h1 className="text-3xl font-bold">{product.name}</h1>
+      <Image
+        src={product.image}
+        alt={product.name}
+        width={500}
+        height={500}
+        className="rounded-lg object-cover"
+      />
+      <p>{product.description}</p>
+      <p className="text-xl font-semibold">Price: ${product.price}</p>
+      {product.discountPercentage && (
+        <p className="text-lg text-red-500">
+          Discount: {product.discountPercentage}%
+        </p>
+      )}
+      <p>Rating: {product.rating} / 5</p>
+    </div>
   );
 };
+
+// Fetch dynamic routes for all product slugs
+export async function generateStaticParams(): Promise<Params[]> {
+  const products: Array<{ slug: { current: string } }> = await client.fetch(
+    `*[_type == "product2"]{
+      "slug": slug.current
+    }`
+  );
+
+  return products.map((product) => ({
+    slug: product.slug.current,
+  }));
+}
 
 export default ProductPage;
