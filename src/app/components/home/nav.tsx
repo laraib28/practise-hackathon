@@ -61,7 +61,7 @@ function Nav() {
         <Link href='/sign-up'>
         <Image src='/images/login.png' alt="login" height={25} width={25}/>
         </Link>
-        (item.length)
+        
       </div>
 
       {/* Mobile Dropdown Menu */}

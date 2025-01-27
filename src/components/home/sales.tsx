@@ -5,71 +5,82 @@ import { AiFillStar } from "react-icons/ai";
 import { CiHeart } from "react-icons/ci";
 import { IoEyeOutline } from "react-icons/io5";
 import { client } from "@/sanity/lib/client";
+import Link from "next/link";
 
-const Slidebar = () => {
-  async function onSubmit(values: { image: any; name: any; slug: any; description: any; price: any; discountPercentage: any; priceWithoutDiscount: any; rating: any; }) {
-    try {
-      const newProduct = {
-        _type: "product2", // Match the schema type
-        image: {
-          _type: 'image',
-          asset: {
-            _ref: values.image._ref, // Use image reference
-          },
-        },
-        name: values.name,
-        slug: { current: values.slug }, // Slug is an object
-        description: values.description,
-        price: Number(values.price), // Ensure numeric inputs
-        discountPercentage: Number(values.discountPercentage),
-        priceWithoutDiscount: Number(values.priceWithoutDiscount),
-        rating: Number(values.rating),
-      };
-      
-      await client.create(newProduct);
-      alert("Product added successfully!");
-    } catch (error) {
-      console.error("Error adding product:", error);
-      alert("Failed to add product. Check console for details.");
-    }
-  }
+// types/index.ts
+
+export interface Product {
+  name: string;              
+  description: string;        
+  imageUrl: string;           
+  price: number;              
+  discountPercentage?: number;
+  priceWithoutDiscount: number;
+  rating: number;             
+  ratingCount: number;        
+  tags: string[];             
+  badge: string;              
+  slug: string;               
+}
+
+const Sales = async () => {
+  const data: Product[] = await client.fetch(
+    `*[_type == "product2" && "sales" in tags] {
+  name,
+  description,
+  "imageUrl": image.asset->url,
+  price,
+  discountPercentage,
+  priceWithoutDiscount,
+  rating,
+  ratingCount,
+  tags,
+  badge,
+  slug
+}
+`
+  );
 
   const products = [
     {
       id: 1,
-      discount: "-40%",
-      image: "/images/gaming.png",
       name: "HAVIT HV-G92 Gamepad",
-      price: "$120",
-      originalPrice: "$160",
+      image: { asset: { url: "/images/gaming.png" } },
       rating: 4,
+      price: "$120",
+      discountPrice: "$160",
+      discount: "-40%",
+      slug: "havit-hv-g92-gamepad",
     },
     {
       id: 2,
-      discount: "-35%",
-      image: "/images/keboard.png",
       name: "AK-900 Wired Keyboard",
-      price: "$960",
-      originalPrice: "$1160",
+      image: { asset: { url: "/images/keboard.png" } },
       rating: 5,
+      price: "$960",
+      discountPrice: "$1160",
+      discount: "-35%",
+      slug: "ak-900-wired-keyboard",
     },
     {
       id: 3,
-      discount: "-30%",
-      image: "/images/design.jpg",
       name: "IPSL LCD Gaming Monitor",
-      price: "$370",
-      originalPrice: "$400",
+      image: { asset: { url: "/images/design.jpg" } },
       rating: 5,
+      price: "$370",
+      discountPrice: "$400",
+      discount: "-30%",
+      slug: "ipsl-lcd-gaming-monitor",
     },
     {
       id: 4,
-      discount: "-25%",
-      image: "/images/chair.png",
       name: "S-Series Comfort Chair",
-      price: "$375",
-      originalPrice: "$500",
+      image: { asset: { url: "/images/chair.png" } },
       rating: 4,
+      price: "$375",
+      discountPrice: "$500",
+      discount: "-25%",
+      slug: "s-series-comfort-chair",
     },
   ];
 
@@ -77,20 +88,24 @@ const Slidebar = () => {
     <div className="px-4 py-8">
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row items-center justify-between mb-8 space-y-6 lg:space-y-0 ml-16">
-        {/* Flash Sale Title */}
         <div className="text-center lg:text-left">
-          <div className="flex items-center justify-center lg:justify-start ">
-            <Image src="/images/Rectangle 18.png" alt="icon" width={20} height={20} className="m-5" />
+          <div className="flex items-center justify-center lg:justify-start">
+            <Image
+              src="/images/Rectangle 18.png"
+              alt="icon"
+              width={20}
+              height={20}
+              className="m-5"
+            />
             <h1 className="text-red-700 text-2xl font-bold">Today&#39;s</h1>
           </div>
           <h2 className="text-2xl md:text-4xl font-bold mt-2">Flash Sales</h2>
         </div>
 
-        {/* Countdown Timer */}
         <div className="flex space-x-4 lg:space-x-6 lg:justify-start pr-9">
           {["Days", "Hours", "Minutes", "Seconds"].map((unit, index) => (
             <div key={index}>
-              <p className="text-3xl md:text-4xl font-bold ">
+              <p className="text-3xl md:text-4xl font-bold">
                 {index === 0
                   ? "03"
                   : index === 1
@@ -105,7 +120,6 @@ const Slidebar = () => {
           ))}
         </div>
 
-        {/* Navigation Arrows */}
         <div className="flex items-center space-x-4">
           <div className="p-2 bg-gray-300 rounded-full cursor-pointer hover:bg-gray-300 transition">
             <FaLongArrowAltLeft className="text-xl " />
@@ -120,48 +134,44 @@ const Slidebar = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <div key={product.id} className="relative flex flex-col items-center">
-            {/* Product Card */}
             <div className="rounded-md p-4 flex flex-col items-center bg-gray-50 shadow-md">
-              {/* Discount Badge */}
-              <div className="bg-red-500 rounded-sm text-white text-xs px-3 py-1  self-start">
+              <div className="bg-red-500 rounded-sm text-white text-xs px-3 py-1 self-start">
                 {product.discount}
               </div>
-
-              {/* Heart and Eye Icons */}
               <div className="absolute top-2 right-2 flex flex-col space-y-2 pr-6">
-                <CiHeart className="text-2xl font-bold cursor-pointer hover:text-red-700 transition " />
+                <CiHeart className="text-2xl font-bold cursor-pointer hover:text-red-700 transition" />
                 <IoEyeOutline className="text-xl cursor-pointer hover:text-gray-700 transition" />
               </div>
-
-              {/* Product Image */}
-              <div className="">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  height={200}
-                  width={200}
-                  className=""
-                />
-                <button className="bg-black text-white w-full h-11 mt-3">Add to Cart</button>
+              <div>
+                <Link href={`/saleS/${product.slug}`}>
+                  <Image
+                    src={product.image.asset.url}
+                    alt={product.name}
+                    height={200}
+                    width={200}
+                  />
+                </Link>
               </div>
+              <button className="bg-black text-white w-full h-11 mt-3">
+                Add to Cart
+              </button>
             </div>
-
-            {/* Product Name and Price */}
             <div className="text-center mt-2">
               <h3 className="font-semibold text-lg">{product.name}</h3>
               <div className="flex items-center justify-center space-x-2">
                 <p className="text-red-600 font-bold text-lg">{product.price}</p>
                 <p className="text-gray-400 text-sm line-through">
-                  {product.originalPrice}
+                  {product.discountPrice}
                 </p>
               </div>
-              {/* Rating */}
               <div className="flex items-center justify-center mt-1">
                 {Array.from({ length: 5 }).map((_, index) => (
                   <AiFillStar
                     key={index}
                     className={`${
-                      index < product.rating ? "text-yellow-500" : "text-gray-300"
+                      index < product.rating
+                        ? "text-yellow-500"
+                        : "text-gray-300"
                     }`}
                   />
                 ))}
@@ -171,7 +181,6 @@ const Slidebar = () => {
         ))}
       </div>
 
-      {/* View All Button */}
       <div className="flex justify-center mt-6">
         <button className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition">
           View All Products
@@ -181,4 +190,4 @@ const Slidebar = () => {
   );
 };
 
-export default Slidebar;
+export default Sales;

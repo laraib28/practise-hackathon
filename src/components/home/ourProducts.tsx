@@ -4,66 +4,123 @@ import React from 'react';
 import { CiHeart } from "react-icons/ci";
 import { AiFillStar } from "react-icons/ai";
 import { IoEyeOutline } from "react-icons/io5";
+import { client } from '@/sanity/lib/client';
+import Link from 'next/link';
 
+export interface Product {
+    name: string;              
+    description: string;        
+    imageUrl: string;           
+    price: number;              
+    discountPercentage?: number;
+    priceWithoutDiscount: number;
+    rating: number;             
+    ratingCount: number;        
+    tags: string[];             
+    badge: string;              
+    slug: string;               
+  }
+
+   const data: Product[] = await client.fetch(
+      `*[_type == "product2" && "sales" in tags] {
+    name,
+    description,
+    "imageUrl": image.asset->url,
+    price,
+    discountPercentage,
+    priceWithoutDiscount,
+    rating,
+    ratingCount,
+    tags,
+    badge,
+    slug
+  }
+  `
+    );
 const OurProduct = () => {
     const products = [
         {
-            id: 1,
-            image: "/images/p1.jpg",
-            name: "Breed Dog Food",
-            price: "$100",
-            rating: 35,
+          id: 1,
+          image: { asset: { url: "/images/p1.jpg" } },
+          name: "Breed Dog Food",
+          price: "$100",
+          rating: 35,
+          slug: "breed-dog-food",
+          discountPrice: "$100",
+          discount: "0%",
         },
         {
-            id: 2,
-            image: "/images/p2.jpg",
-            name: "CANON EOS DSLR Camera",
-            price: "$360",
-            rating: 95,
+          id: 2,
+          image: { asset: { url: "/images/p2.png" } },
+          name: "CANON EOS DSLR Camera",
+          price: "$360",
+          rating: 95,
+          slug: "canon-eos-dslr-camera",
+          discountPrice: "$360",
+          discount: "0%",
         },
         {
-            id: 3,
-            image: "/images/p3.jpg",
-            name: "ASUS FHD Gaming Laptop",
-            price: "$700",
-            rating: 325,
+          id: 3,
+          image: { asset: { url: "/images/p3.png" } },
+          name: "ASUS FHD Gaming Laptop",
+          price: "$700",
+          rating: 325,
+          slug: "asus-fhd-gaming-laptop",
+          discountPrice: "$700",
+          discount: "0%",
         },
         {
-            id: 4,
-            image: "/images/p4.jpg",
-            name: "Curology Product Set",
-            price: "$500",
-            rating: 145,
+          id: 4,
+          image: { asset: { url: "/images/p4.png" } },
+          name: "Curology Product Set",
+          price: "$500",
+          rating: 145,
+          slug: "curology-product-set",
+          discountPrice: "$500",
+          discount: "0%",
         },
         {
-            id: 5,
-            image: "/images/p5.jpg",
-            name: "Kids Electric Car",
-            price: "$960",
-            rating: 65,
+          id: 5,
+          image: { asset: { url: "/images/p5.png" } },
+          name: "Kids Electric Car",
+          price: "$960",
+          rating: 65,
+          slug: "kids-electric-car",
+          discountPrice: "$960",
+          discount: "0%",
         },
         {
-            id: 6,
-            image: "/images/p6.jpg",
-            name: "Jr.Zoom Soccer Cleats",
-            price: "$1160",
-            rating: 35,
+          id: 6,
+          image: { asset: { url: "/images/p6.png" } },
+          name: "Jr.Zoom Soccer Cleats",
+          price: "$1160",
+          rating: 35,
+          slug: "jr-zoom-soccer-cleats",
+          discountPrice: "$1160",
+          discount: "0%",
         },
         {
-            id: 7,
-            image: "/images/p7.jpg",
-            name: "GP11 Shooter USB Gamepad",
-            price: "$660",
-            rating: 55,
+          id: 7,
+          image: { asset: { url: "/images/p7.png" } },
+          name: "GP11 Shooter USB Gamepad",
+          price: "$660",
+          rating: 55,
+          slug: "gp11-shooter-usb-gamepad",
+          discountPrice: "$660",
+          discount: "0%",
         },
         {
-            id: 8,
-            image: "/images/p8.jpg",
-            name: "Quilted Satin Jacket",
-            price: "$660",
-            rating: 55,
+          id: 8,
+          image: { asset: { url: "/images/p8.png" } },
+          name: "Quilted Satin Jacket",
+          price: "$660",
+          rating: 55,
+          slug: "quilted-satin-jacket",
+          discountPrice: "$660",
+          discount: "0%",
         },
-    ];
+      ];
+      
 
     return (
         <div className='w-full max-w-[1170px] mx-auto p-5'>
@@ -91,13 +148,15 @@ const OurProduct = () => {
 
                         {/* Product Image */}
                         <div className="bg-gray-200 mb-4">
+                        <Link href={`/ourProductS/${product.slug}`}>
                             <Image
-                                src={product.image}
+                                 src={product.image.asset.url}
                                 alt={product.name}
                                 height={200}
                                 width={200}
                                 className="bg-gray-200 max-h-[200px] object-cover"
                             />
+                           </Link>
                         </div>
 
                         {/* Product Name */}

@@ -60,25 +60,27 @@ export default {
         description: 'Number of ratings'
       },
       {
-        name: 'tags',
-        type: 'array',
-        title: 'Tags',
-        of: [{ type: 'string' }],
+        name: "tags",
+        title: "Tags",
+        type: "array",
+        of: [{ type: "string" }],
         options: {
-          layout: 'tags'
+          list: [
+            { title: "Selling Procts", value: "selling products" },
+            {
+              title: "Our Products",
+              value: "our products",
+            },
+            { title: "Sales", value: "sale" },
+          ],
         },
-        description: 'Add tags like "new arrival", "bestseller", etc.'
       },
-      // {
-      //   name: 'sizes',
-      //   type: 'array',
-      //   title: 'Sizes',
-      //   of: [{ type: 'string' }],
-      //   options: {
-      //     layout: 'tags'
-      //   },
-      //   description: 'Add sizes like S , M , L , XL , XXL'
-      // },
+    
+      {
+        name: "badge",
+        title: "Badge",
+        type: "string",
+      },
      
     ]
   };

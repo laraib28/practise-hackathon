@@ -1,44 +1,89 @@
+import { client } from "@/sanity/lib/client";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { CiHeart } from "react-icons/ci";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
 
+export interface Product {
+  name: string;              
+  description: string;        
+  imageUrl: string;           
+  price: number;              
+  discountPercentage?: number;
+  priceWithoutDiscount: number;
+  rating: number;             
+  ratingCount: number;        
+  tags: string[];             
+  badge: string;              
+  slug: string;               
+}
+
+
 
 const SellingProducts = () => {
-  const products = [
-    {
-      id: 1,
-      image: "/images/jacket.png",
-      name: "The north coat",
-      price: "$260",
-      originalPrice: "$360",
-      rating: 4.5,
-    },
-    {
-      id: 2,
-      image: "/images/bag.jpg",
-      name: "Gucci duffle bag",
-      price: "$960",
-      originalPrice: "$1160",
-      rating: 4.0,
-    },
-    {
-      id: 3,
-      image: "/images/speaker.png",
-      name: "RGB liquid CPU Cooler",
-      price: "$160",
-      originalPrice: "$170",
-      rating: 3.5,
-    },
-    {
-      id: 4,
-      image: "/images/bookstand.png",
-      name: "Small BookSelf",
-      price: "$360",
-      rating: 5.0,
-    },
-  ];
+  `*[_type == "product2" && "selling products" in tags] {
+  name,
+  description,
+  "imageUrl": image.asset->url,
+  price,
+  discountPercentage,
+  priceWithoutDiscount,
+  rating,
+  ratingCount,
+  tags,
+  badge,
+  slug
+}
+`
+const products = [
+  {
+    id: 1,
+    image: { asset: { url: "/images/jacket.png" } },
+    name: "The north coat",
+    price: "$260",
+    originalPrice: "$360",
+    rating: 4.5,
+    slug: "the-north-coat",
+    discountPrice: "$360",
+    discount: "-28%",
+  },
+  {
+    id: 2,
+    image: { asset: { url: "/images/bag.jpg" } },
+    name: "Gucci duffle bag",
+    price: "$960",
+    originalPrice: "$1160",
+    rating: 4.0,
+    slug: "gucci-duffle-bag",
+    discountPrice: "$1160",
+    discount: "-17%",
+  },
+  {
+    id: 3,
+    image: { asset: { url: "/images/speaker.png" } },
+    name: "RGB liquid CPU Cooler",
+    price: "$160",
+    originalPrice: "$170",
+    rating: 3.5,
+    slug: "rgb-liquid-cpu-cooler",
+    discountPrice: "$170",
+    discount: "-6%",
+  },
+  {
+    id: 4,
+    image: { asset: { url: "/images/bookstand.png" } },
+    name: "Small BookSelf",
+    price: "$360",
+    originalPrice: "$360",
+    rating: 5.0,
+    slug: "small-bookshelf",
+    discountPrice: "$360",
+    discount: "0%",
+  },
+];
+
 
   // Function to render stars based on rating
   const renderRating = (rating: number) => {
@@ -98,14 +143,16 @@ const SellingProducts = () => {
   <CiHeart className="text-xl sm:text-2xl ml-1 cursor-pointer transition bg-white rounded-full" />
   <IoEyeOutline className="sm:text-2xl cursor-pointer transition bg-white rounded-full" />
 </div>
+<Link href={`/sellingProductS/${product.slug}`}>
         <Image
-          src={product.image}
+          src={product.image.asset.url}
           alt={product.name}
           layout="intrinsic"
           width={140}
           height={146}
           className="object-contain max-h-full"
         />
+        </Link>
       </div>
       {/* Product Details */}
       <div className="mt-4 text-center">

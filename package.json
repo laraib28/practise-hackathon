@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "import-data": "ts-node scripts/importSanityData.mjs"
+    "import-data": "ts-node scripts/importSanityData.mjs",
+      "cleanup-data": "ts-node scripts/cleanup.ts"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.4",

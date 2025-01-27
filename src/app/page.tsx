@@ -3,10 +3,10 @@ import Category from './category/page'
 import Banner2 from './components/banner2/page'
 import GridBanner from './components/gridBanner/page'
 import Hero from './components/hero/hero'
-import OurProduct from './components/ourProduct/page'
-import SellingProducts from './components/sellingProducts/page'
 import Services from './components/services/page'
-import Slidebar from './components/sales/page'
+import OurProduct from '@/components/home/ourProducts'
+import Slidebar from '@/components/home/sales'
+import SellingProducts from '@/components/home/sellingProduct'
 
 
 
