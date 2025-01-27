@@ -1,6 +1,7 @@
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 export interface Product {
+    _id: string;
     image: string | StaticImport;
     name: string;              
     description: string;        
